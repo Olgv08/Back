@@ -12,6 +12,10 @@ const taskSchema = new mongoose.Schema(
             fontFamily: { type: String, default: "Inter, system-ui, sans-serif" },
             color: { type: String, default: "#0f172a" },
             fontSize: { type: String, enum: ["sm", "md", "lg"], default: "md" },
+            bold: { type: Boolean, default: false },
+            italic: { type: Boolean, default: false },
+            underline: { type: Boolean, default: false },
+            bgColor: { type: String, default: "" },
         },
     },
     {

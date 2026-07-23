@@ -3,6 +3,19 @@ import Task from "../models/Task.js";
 
 const allowed = ["Pendiente", "En Progreso", "Completada"]; // <-- usa este nombre en todos lados
 
+function sanitizeStyle(style) {
+    if (!style || typeof style !== "object") return undefined;
+    return {
+        fontFamily: style.fontFamily,
+        color: style.color,
+        fontSize: ["sm", "md", "lg"].includes(style.fontSize) ? style.fontSize : "md",
+        bold: !!style.bold,
+        italic: !!style.italic,
+        underline: !!style.underline,
+        bgColor: typeof style.bgColor === "string" ? style.bgColor : "",
+    };
+}
+
 export async function list(req, res) {
     const items = await Task.find({ user: req.userId, deleted: false }).sort({ createdAt: -1 });
     res.json({ items });
@@ -20,13 +33,7 @@ export async function create(req, res) {
         description,
         status: allowed.includes(status) ? status : "Pendiente",
         clienteId: clienteId ? String(clienteId) : undefined, // 💡 ¡AHORA SÍ SE GUARDA!
-        style: style
-            ? {
-                  fontFamily: style.fontFamily,
-                  color: style.color,
-                  fontSize: ["sm", "md", "lg"].includes(style.fontSize) ? style.fontSize : "md",
-              }
-            : undefined,
+        style: sanitizeStyle(style),
     });
     
     res.status(201).json({ task });
@@ -41,11 +48,7 @@ export async function update(req, res) {
 
   const update = { title, description, status };
   if (style) {
-    update.style = {
-      fontFamily: style.fontFamily,
-      color: style.color,
-      fontSize: ["sm", "md", "lg"].includes(style.fontSize) ? style.fontSize : "md",
-    };
+    update.style = sanitizeStyle(style);
   }
 
   const task = await Task.findOneAndUpdate(
@@ -83,13 +86,7 @@ export async function bulksync(req, res) {
         title: String(t.title),
         description: t.description ?? "",
         status: allowed.includes(t.status) ? t.status : "Pendiente",
-        style: t.style
-          ? {
-              fontFamily: t.style.fontFamily,
-              color: t.style.color,
-              fontSize: ["sm", "md", "lg"].includes(t.style.fontSize) ? t.style.fontSize : "md",
-            }
-          : undefined,
+        style: sanitizeStyle(t.style),
       }));
 
     if (!clean.length) return res.json({ mapping: [] });
