@@ -15,7 +15,6 @@ const taskSchema = new mongoose.Schema(
             bold: { type: Boolean, default: false },
             italic: { type: Boolean, default: false },
             underline: { type: Boolean, default: false },
-            bgColor: { type: String, default: "" },
         },
     },
     {

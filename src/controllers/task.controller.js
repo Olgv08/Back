@@ -12,7 +12,6 @@ function sanitizeStyle(style) {
         bold: !!style.bold,
         italic: !!style.italic,
         underline: !!style.underline,
-        bgColor: typeof style.bgColor === "string" ? style.bgColor : "",
     };
 }
 
